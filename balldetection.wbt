@@ -1,0 +1,185 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/robots/gctronic/e-puck/protos/E-puck.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation -0.261165700047355 0.44918672661643305 0.8544142799312222 1.1950319338769915
+  position -0.6902303298566884 -1.5257895224000146 2.030409376601306
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  floorSize 12 12
+}
+Solid {
+  translation 0.576324 0.568898 0
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0 0
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 0.1 0.1 0.1
+      }
+    }
+  ]
+  name "solid(1)"
+}
+DEF BALL Solid {
+  translation 0.27394040471998227 1.9916333626229474 0.0491781593618209
+  rotation 0.22576612658230308 -0.0762278497973191 -0.9711946102626913 2.038212932157004
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 1 0 0
+        roughness 1
+        metalness 0
+      }
+      geometry Sphere {
+        radius 0.05
+      }
+    }
+  ]
+  boundingObject Sphere {
+    radius 0.05
+  }
+  physics Physics {
+  }
+  linearVelocity 0 0 5.429106927670697e-17
+}
+Solid {
+  translation 0.466905 1.29151 -3.33067e-15
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0 0
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 0.1 0.1 0.1
+      }
+    }
+  ]
+  name "solid(2)"
+}
+Solid {
+  translation 0.359329 0.0944683 8.88178e-16
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0 0
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 0.1 0.1 0.1
+      }
+    }
+  ]
+  name "solid(3)"
+}
+Solid {
+  translation 0.887596 0.391709 6.66133e-16
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0 0
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 0.1 0.1 0.1
+      }
+    }
+  ]
+  name "solid(5)"
+}
+Solid {
+  translation 0.960325 0.802402 -1.55431e-15
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0 0
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 0.1 0.1 0.1
+      }
+    }
+  ]
+  name "solid(6)"
+}
+Solid {
+  translation 1.18143 1.24813 -4.4409e-16
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0 0
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 0.1 0.1 0.1
+      }
+    }
+  ]
+  name "solid(7)"
+}
+Solid {
+  translation 0.266643 0.954205 1.55431e-15
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0 0
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 0.1 0.1 0.1
+      }
+    }
+  ]
+  name "solid(8)"
+}
+Solid {
+  translation -0.0347192 0.600271 7.54952e-15
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0 0 0
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 0.1 0.1 0.1
+      }
+    }
+  ]
+  name "solid(4)"
+}
+E-puck {
+  hidden position_0_0 177.35666907285787
+  hidden position_0_1 68.21367319326156
+  hidden linearVelocity_0 5.9340856677966146e-05 5.042987012468159e-06 6.83393967903484e-08
+  hidden angularVelocity_0 -0.0006185375770904865 -0.0005276872225425805 -1.4083897715569906
+  hidden rotation_1 0 0.9999999999999999 0 1.4274804718294478
+  hidden linearVelocity_1 0.02622738233412441 -0.025848613448835718 -2.7780817068905274e-08
+  hidden angularVelocity_1 1.4069180108885828 1.4209222648019852 -1.421476497453921
+  hidden rotation_2 0 1 0 5.381820121465691
+  hidden linearVelocity_2 -0.026107696699182323 0.025873426412558034 -9.436479598325015e-10
+  hidden angularVelocity_2 -1.4081362531145296 -1.4219949976431434 -1.4215822415644621
+  translation 0.3758375136928591 1.845140138431897 -8.093473471352565e-05
+  rotation 0.0003531643215741551 0.0008711663340473532 0.9999995581719926 -0.8050599540525143
+  controller "E-puck_controller_py"
+}

@@ -7,80 +7,90 @@ Original file is located at
     https://colab.research.google.com/drive/1zysgxQti0tIF-_ssG74RQMmKYC2rXZ4D
 """
 
-from controller import Robot, Camera, Motor
-
-TIME_STEP = 32
+from controller import Robot
 
 # Inicializáció
+TIME_STEP = 32
 robot = Robot()
+
+# Kamera inicializálása
 camera = robot.getDevice('camera')
 camera.enable(TIME_STEP)
 
+# Motorok inicializálása
 left_motor = robot.getDevice('left wheel motor')
 right_motor = robot.getDevice('right wheel motor')
-
 left_motor.setPosition(float('inf'))
 right_motor.setPosition(float('inf'))
-
 left_motor.setVelocity(0.0)
 right_motor.setVelocity(0.0)
+
+# Proximity szenzorok inicializálása
+ps = []
+for i in range(8):
+    sensor = robot.getDevice(f'ps{i}')
+    sensor.enable(TIME_STEP)
+    ps.append(sensor)
 
 # Paraméterek
 FORWARD_SPEED = 3.0
 TURN_SPEED = 2.0
-STOP_DISTANCE = 20  # pixel érték, kb. mennyire legyen középen a labda
-OBSTACLE_THRESHOLD = 80  # proximity érték, ami felett akadálynak számít
-
-# Szenzorok akadályérzékelésre
-ps = []
-for i in range(8):
-    sensor = robot.getDevice('ps' + str(i))
-    sensor.enable(TIME_STEP)
-    ps.append(sensor)
-
-def detect_obstacle():
-    for i in [0, 1, 6, 7]:  # front oldali szenzorok
-        if ps[i].getValue() > OBSTACLE_THRESHOLD:
-            return True
-    return False
+CENTER_THRESHOLD = 0.1  # Középhez képesti tolerancia
+STOP_PIXEL_COUNT = 500  # Ha ennyi piros pixel van, megáll
 
 # Fő ciklus
 while robot.step(TIME_STEP) != -1:
-    img = camera.getImage()
+    # Kamera képkocka
     width = camera.getWidth()
     height = camera.getHeight()
+    img = camera.getImage()
+    
+    red_pixels = []
 
-    r, g, b = 0, 0, 0
-    cx_total = 0
-    count = 0
-
-    for y in range(height):
-        for x in range(width):
+    # Piros pixelek keresése
+    for x in range(width):
+        for y in range(height):
             r = camera.imageGetRed(img, width, x, y)
             g = camera.imageGetGreen(img, width, x, y)
             b = camera.imageGetBlue(img, width, x, y)
+            if r > 150 and g < 100 and b < 100:  # Piros szűrés
+                red_pixels.append((x, y))
 
-            if r > 200 and g < 100 and b < 100:
-                cx_total += x
-                count += 1
+    # Akadály detektálás
+    left_obstacle = ps[5].getValue() > 80 or ps[6].getValue() > 80 or ps[7].getValue() > 80
+    right_obstacle = ps[0].getValue() > 80 or ps[1].getValue() > 80 or ps[2].getValue() > 80
 
-    if count > 0:
-        cx = cx_total / count
-        offset = (cx - width / 2) / (width / 2)
+    if left_obstacle:
+        # Bal oldali akadály → jobbra fordulás
+        left_motor.setVelocity(TURN_SPEED)
+        right_motor.setVelocity(-TURN_SPEED)
+    elif right_obstacle:
+        # Jobb oldali akadály → balra fordulás
+        left_motor.setVelocity(-TURN_SPEED)
+        right_motor.setVelocity(TURN_SPEED)
+    elif len(red_pixels) > 0:
+        # Ha lát piros labdát
+        avg_x = sum([p[0] for p in red_pixels]) / len(red_pixels)
+        offset = (avg_x - width / 2) / (width / 2)
 
-        if abs(offset) < 0.2:
-            if detect_obstacle():
-                left_motor.setVelocity(-TURN_SPEED)
-                right_motor.setVelocity(TURN_SPEED)
-            else:
+        if len(red_pixels) > STOP_PIXEL_COUNT:
+            # Ha túl közel van a labda → megáll
+            left_motor.setVelocity(0)
+            right_motor.setVelocity(0)
+        else:
+            if abs(offset) < CENTER_THRESHOLD:
+                # Ha közel középen van → egyenes előre
                 left_motor.setVelocity(FORWARD_SPEED)
                 right_motor.setVelocity(FORWARD_SPEED)
-        elif offset > 0:
-            left_motor.setVelocity(TURN_SPEED)
-            right_motor.setVelocity(-TURN_SPEED)
-        else:
-            left_motor.setVelocity(-TURN_SPEED)
-            right_motor.setVelocity(TURN_SPEED)
+            elif offset > 0:
+                # Labda jobbra → jobbra fordul
+                left_motor.setVelocity(TURN_SPEED)
+                right_motor.setVelocity(-TURN_SPEED)
+            else:
+                # Labda balra → balra fordul
+                left_motor.setVelocity(-TURN_SPEED)
+                right_motor.setVelocity(TURN_SPEED)
     else:
+        # Nem lát semmit → keresgél
         left_motor.setVelocity(TURN_SPEED)
         right_motor.setVelocity(-TURN_SPEED)
